@@ -18,7 +18,6 @@ var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}
 
 // Pull data from json.
 d3.json(queryUrl, function(response) {
-    console.log(response);
     eq = response.features
     for (var x = 0; x < eq.length; x++) {
       var location = eq[x].geometry;
@@ -47,11 +46,27 @@ d3.json(queryUrl, function(response) {
       "</h2><hr><p>" + new Date(eqprop.time) + 
       "<br>Magnitude: " + magnitude + 
       "<br>Depth: " + depth + "</p>")
-      .addTo(myMap);
-      }})
+      .addTo(myMap)}})
  
+      // create legend
+     
+      var legend = L.control({ position: "bottomright" });
+      
+      legend.onAdd = function() {
+          var div = L.DomUtil.create("div", "info legend"); 
+          limits = [-10, 10, 20, 30, 40];
+          var colors = ["yellow", "greenyellow", "green", "orange", "red"];
 
-
-
-
-
+          div.innerHTML += "<h3>Earthquake Depth</h3>"
+  
+          for (var x = 0; x < limits.length; x++) {
+              div.innerHTML +=
+                  '<i style="background:' + colors[x] + '"></i>' +
+                  limits[x] + (limits[x + 1] ? '&ndash;' + limits[x + 1] + ' km<br>' : '+ km');
+          }
+          return div;
+      };
+    
+      // Adding legend to the map
+      legend.addTo(myMap);
+    
